@@ -15,7 +15,7 @@ If you're a Scratch developer and you feel burdened by the vanilla comment syste
 
 ## I'm sold, how do I install it?
 
-## Installing TurboDev
+## Installing Commentations
 
 First, download the latest Commentations build over at the Releases page. The installation process for Commentations is quite simple:
 
