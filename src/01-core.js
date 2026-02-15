@@ -1,7 +1,7 @@
 class Commentations {
   getInfo() {
     return {
-      id: 'kbCommentations',
+      id: 'kxCommentations',
       name: 'Commentations',
       color1: '#607D8B',
       color2: '#455A64',
