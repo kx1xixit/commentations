@@ -1,8 +1,8 @@
 {
-  "name": "My TurboWarp Extension",
-  "id": "myTurboWarpExtension",
+  "name": "Commentations",
+  "id": "kxCommentations",
   "version": "1.0.0",
-  "description": "A custom extension for TurboWarp",
-  "author": "Your Name",
-  "license": "KBEC-1.0"
+  "description": "Simple comment system for Scratch.",
+  "author": "kx1xixit",
+  "license": "KXEC-1.1"
 }
