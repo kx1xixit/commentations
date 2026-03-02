@@ -258,7 +258,7 @@ jobs:
           "
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: extension-${{ matrix.node-version }}
           path: build/extension.js
