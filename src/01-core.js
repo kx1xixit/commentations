@@ -35,7 +35,7 @@ class Commentations {
             },
             TEXT: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'reason for disabling',
+              defaultValue: 'reason',
             },
           },
         },
