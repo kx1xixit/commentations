@@ -8,59 +8,34 @@ class Commentations {
       color3: '#455A64',
       blocks: [
         {
-          opcode: 'label',
+          opcode: 'annotate',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'new section: [TEXT]',
+          text: '[TYPE] [TEXT]',
           arguments: {
-            TEXT: {
+            TYPE: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'section label',
+              menu: 'annotationType',
             },
-          },
-        },
-        {
-          opcode: 'note',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'note: [TEXT]',
-          arguments: {
             TEXT: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'an important note',
-            },
-          },
-        },
-        {
-          opcode: 'comment',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'comment: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'comment',
-            },
-          },
-        },
-        {
-          opcode: 'todo',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'to-do: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'fix this bug',
+              defaultValue: 'your text here',
             },
           },
         },
         '---',
         {
-          opcode: 'disableCode',
+          opcode: 'blockAnnotate',
           blockType: Scratch.BlockType.CONDITIONAL,
-          text: 'disable code with reason: [TEXT]',
+          text: '[TYPE] [TEXT]',
           branchCount: 1,
           arguments: {
+            TYPE: {
+              type: Scratch.ArgumentType.STRING,
+              menu: 'blockAnnotationType',
+            },
             TEXT: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'reason for disabling',
+              defaultValue: 'reason',
             },
           },
         },
@@ -80,32 +55,51 @@ class Commentations {
             },
           },
         },
+        {
+          opcode: 'explainBoolean',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: '[VALUE] comment: [TEXT]',
+          arguments: {
+            VALUE: {
+              type: Scratch.ArgumentType.BOOLEAN,
+              defaultValue: false,
+            },
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'is touching wall',
+            },
+          },
+        },
       ],
+      menus: {
+        annotationType: {
+          acceptReporters: false,
+          items: [
+            { text: 'comment:', value: 'comment:' },
+            { text: 'note:', value: 'note:' },
+            { text: 'to-do:', value: 'to-do:' },
+            { text: 'warning:', value: 'warning:' },
+            { text: 'fixme:', value: 'fixme:' },
+            { text: 'new section:', value: 'new section:' },
+          ],
+        },
+        blockAnnotationType: {
+          acceptReporters: false,
+          items: [
+            { text: 'disable code:', value: 'disable code:' },
+            { text: 'deprecated, use:', value: 'deprecated, use:' },
+          ],
+        },
+      },
     };
   }
 
-  label(_args) {
-    // Does nothing, just a label
+  annotate(_args) {
+    // Does nothing, purely for annotation
     return;
   }
 
-  comment(_args) {
-    // Does nothing, just a comment
-    return;
-  }
-
-  note(_args) {
-    // I wish I could go lazy-bones mode and just use comment() for the note block,
-    // but I guess we can never have any good things in life
-    return;
-  }
-
-  todo(_args) {
-    // Does nothing, just a to-do marker
-    return;
-  }
-
-  disableCode(_args) {
+  blockAnnotate(_args) {
     // Returns false so the code inside the C-block never runs
     return false;
   }
@@ -113,6 +107,12 @@ class Commentations {
   explainValue(args) {
     // Returns the value input, ignores the text input.
     // This allows you to comment on specific numbers/strings.
+    return args.VALUE;
+  }
+
+  explainBoolean(args) {
+    // Returns the boolean value input, ignores the text input.
+    // This allows you to comment on specific boolean conditions.
     return args.VALUE;
   }
 }

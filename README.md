@@ -4,8 +4,10 @@ Commentations is a simple commenting extension for TurboWarp. Ditch the vanilla 
 
 ## Key features
 
-- **Inline commenting**: You can add TODOs, notes, and more to your projects for the sake of documentation.
+- **Inline commenting**: You can add TODOs, notes, warnings, fixmes, and more to your projects for the sake of documentation.
 - **Disabling code**: You can put code you want to disable in a C block, and it disables the code. You can specify a reason, too!
+- **Deprecating code**: You can mark old code as deprecated inside a C block and specify what to use instead.
+- **Annotating values**: You can wrap any value (string/number or boolean) with a comment to explain what it represents.
 
 ## Who is this for?
 
