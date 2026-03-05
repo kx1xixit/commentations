@@ -8,93 +8,34 @@ class Commentations {
       color3: '#455A64',
       blocks: [
         {
-          opcode: 'label',
+          opcode: 'annotate',
           blockType: Scratch.BlockType.COMMAND,
-          text: 'new section: [TEXT]',
+          text: '[TYPE] [TEXT]',
           arguments: {
-            TEXT: {
+            TYPE: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'section label',
+              menu: 'annotationType',
             },
-          },
-        },
-        {
-          opcode: 'note',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'note: [TEXT]',
-          arguments: {
             TEXT: {
               type: Scratch.ArgumentType.STRING,
-              defaultValue: 'an important note',
-            },
-          },
-        },
-        {
-          opcode: 'comment',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'comment: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'comment',
-            },
-          },
-        },
-        {
-          opcode: 'todo',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'to-do: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'fix this bug',
-            },
-          },
-        },
-        {
-          opcode: 'warning',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'warning: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'be careful here',
-            },
-          },
-        },
-        {
-          opcode: 'fixme',
-          blockType: Scratch.BlockType.COMMAND,
-          text: 'fixme: [TEXT]',
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'this is broken',
+              defaultValue: 'your text here',
             },
           },
         },
         '---',
         {
-          opcode: 'disableCode',
+          opcode: 'blockAnnotate',
           blockType: Scratch.BlockType.CONDITIONAL,
-          text: 'disable code with reason: [TEXT]',
+          text: '[TYPE] [TEXT]',
           branchCount: 1,
           arguments: {
+            TYPE: {
+              type: Scratch.ArgumentType.STRING,
+              menu: 'blockAnnotationType',
+            },
             TEXT: {
               type: Scratch.ArgumentType.STRING,
               defaultValue: 'reason for disabling',
-            },
-          },
-        },
-        {
-          opcode: 'deprecated',
-          blockType: Scratch.BlockType.CONDITIONAL,
-          text: 'deprecated, use [TEXT] instead',
-          branchCount: 1,
-          arguments: {
-            TEXT: {
-              type: Scratch.ArgumentType.STRING,
-              defaultValue: 'new block name',
             },
           },
         },
@@ -130,47 +71,36 @@ class Commentations {
           },
         },
       ],
+      menus: {
+        annotationType: {
+          acceptReporters: false,
+          items: [
+            { text: 'comment:', value: 'comment:' },
+            { text: 'note:', value: 'note:' },
+            { text: 'to-do:', value: 'to-do:' },
+            { text: 'warning:', value: 'warning:' },
+            { text: 'fixme:', value: 'fixme:' },
+            { text: 'new section:', value: 'new section:' },
+          ],
+        },
+        blockAnnotationType: {
+          acceptReporters: false,
+          items: [
+            { text: 'disable code:', value: 'disable code:' },
+            { text: 'deprecated, use:', value: 'deprecated, use:' },
+          ],
+        },
+      },
     };
   }
 
-  label(_args) {
-    // Does nothing, just a label
+  annotate(_args) {
+    // Does nothing, purely for annotation
     return;
   }
 
-  comment(_args) {
-    // Does nothing, just a comment
-    return;
-  }
-
-  note(_args) {
-    // I wish I could go lazy-bones mode and just use comment() for the note block,
-    // but I guess we can never have any good things in life
-    return;
-  }
-
-  todo(_args) {
-    // Does nothing, just a to-do marker
-    return;
-  }
-
-  warning(_args) {
-    // Does nothing, just a warning marker
-    return;
-  }
-
-  fixme(_args) {
-    // Does nothing, just a fixme marker
-    return;
-  }
-
-  disableCode(_args) {
+  blockAnnotate(_args) {
     // Returns false so the code inside the C-block never runs
-    return false;
-  }
-
-  deprecated(_args) {
-    // Returns false so the deprecated code inside the C-block never runs
     return false;
   }
 
