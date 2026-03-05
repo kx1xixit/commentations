@@ -51,6 +51,28 @@ class Commentations {
             },
           },
         },
+        {
+          opcode: 'warning',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'warning: [TEXT]',
+          arguments: {
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'be careful here',
+            },
+          },
+        },
+        {
+          opcode: 'fixme',
+          blockType: Scratch.BlockType.COMMAND,
+          text: 'fixme: [TEXT]',
+          arguments: {
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'this is broken',
+            },
+          },
+        },
         '---',
         {
           opcode: 'disableCode',
@@ -61,6 +83,18 @@ class Commentations {
             TEXT: {
               type: Scratch.ArgumentType.STRING,
               defaultValue: 'reason for disabling',
+            },
+          },
+        },
+        {
+          opcode: 'deprecated',
+          blockType: Scratch.BlockType.CONDITIONAL,
+          text: 'deprecated, use [TEXT] instead',
+          branchCount: 1,
+          arguments: {
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'new block name',
             },
           },
         },
@@ -77,6 +111,21 @@ class Commentations {
             TEXT: {
               type: Scratch.ArgumentType.STRING,
               defaultValue: 'pixels per step',
+            },
+          },
+        },
+        {
+          opcode: 'explainBoolean',
+          blockType: Scratch.BlockType.BOOLEAN,
+          text: '[VALUE] comment: [TEXT]',
+          arguments: {
+            VALUE: {
+              type: Scratch.ArgumentType.BOOLEAN,
+              defaultValue: false,
+            },
+            TEXT: {
+              type: Scratch.ArgumentType.STRING,
+              defaultValue: 'is touching wall',
             },
           },
         },
@@ -105,14 +154,35 @@ class Commentations {
     return;
   }
 
+  warning(_args) {
+    // Does nothing, just a warning marker
+    return;
+  }
+
+  fixme(_args) {
+    // Does nothing, just a fixme marker
+    return;
+  }
+
   disableCode(_args) {
     // Returns false so the code inside the C-block never runs
+    return false;
+  }
+
+  deprecated(_args) {
+    // Returns false so the deprecated code inside the C-block never runs
     return false;
   }
 
   explainValue(args) {
     // Returns the value input, ignores the text input.
     // This allows you to comment on specific numbers/strings.
+    return args.VALUE;
+  }
+
+  explainBoolean(args) {
+    // Returns the boolean value input, ignores the text input.
+    // This allows you to comment on specific boolean conditions.
     return args.VALUE;
   }
 }
