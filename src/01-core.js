@@ -2,7 +2,7 @@ class Commentations {
   getInfo() {
     return {
       id: 'kxCommentations',
-      name: 'Commentations',
+      name: Scratch.translate('Commentations'),
       color1: '#607D8B',
       color2: '#455A64',
       color3: '#455A64',
@@ -10,7 +10,7 @@ class Commentations {
         {
           opcode: 'annotate',
           blockType: Scratch.BlockType.COMMAND,
-          text: '[TYPE] [TEXT]',
+          text: Scratch.translate('[TYPE] [TEXT]'),
           arguments: {
             TYPE: {
               type: Scratch.ArgumentType.STRING,
@@ -26,7 +26,7 @@ class Commentations {
         {
           opcode: 'blockAnnotate',
           blockType: Scratch.BlockType.CONDITIONAL,
-          text: '[TYPE] [TEXT]',
+          text: Scratch.translate('[TYPE] [TEXT]'),
           branchCount: 1,
           arguments: {
             TYPE: {
@@ -43,7 +43,7 @@ class Commentations {
         {
           opcode: 'explainValue',
           blockType: Scratch.BlockType.REPORTER,
-          text: '[VALUE] comment: [TEXT]',
+          text: Scratch.translate('[VALUE] comment: [TEXT]'),
           arguments: {
             VALUE: {
               type: Scratch.ArgumentType.STRING,
@@ -58,7 +58,7 @@ class Commentations {
         {
           opcode: 'explainBoolean',
           blockType: Scratch.BlockType.BOOLEAN,
-          text: '[VALUE] comment: [TEXT]',
+          text: Scratch.translate('[VALUE] comment: [TEXT]'),
           arguments: {
             VALUE: {
               type: Scratch.ArgumentType.BOOLEAN,
@@ -75,19 +75,19 @@ class Commentations {
         annotationType: {
           acceptReporters: false,
           items: [
-            { text: 'comment:', value: 'comment:' },
-            { text: 'note:', value: 'note:' },
-            { text: 'to-do:', value: 'to-do:' },
-            { text: 'warning:', value: 'warning:' },
-            { text: 'fixme:', value: 'fixme:' },
-            { text: 'new section:', value: 'new section:' },
+            { text: Scratch.translate('comment:'), value: 'comment:' },
+            { text: Scratch.translate('note:'), value: 'note:' },
+            { text: Scratch.translate('to-do:'), value: 'to-do:' },
+            { text: Scratch.translate('warning:'), value: 'warning:' },
+            { text: Scratch.translate('fixme:'), value: 'fixme:' },
+            { text: Scratch.translate('new section:'), value: 'new section:' },
           ],
         },
         blockAnnotationType: {
           acceptReporters: false,
           items: [
-            { text: 'disable code:', value: 'disable code:' },
-            { text: 'deprecated, use:', value: 'deprecated, use:' },
+            { text: Scratch.translate('disable code:'), value: 'disable code:' },
+            { text: Scratch.translate('deprecated, use:'), value: 'deprecated, use:' },
           ],
         },
       },

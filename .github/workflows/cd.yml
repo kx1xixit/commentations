@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate extension source
+        run: npm run validate
+
       - name: Build extension
         run: npm run build
 
@@ -40,10 +43,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          ASSETS="./build/extension.js"
+          [ -f ./build/min.extension.js ] && ASSETS="$ASSETS ./build/min.extension.js"
+          [ -f ./build/pretty.extension.js ] && ASSETS="$ASSETS ./build/pretty.extension.js"
           gh release create ${{ github.ref_name }} \
-            ./build/extension.js \
-            ./build/min.extension.js \
-            ./build/pretty.extension.js \
+            $ASSETS \
             --title "Release ${{ github.ref_name }}" \
             --draft=false \
             --generate-notes
