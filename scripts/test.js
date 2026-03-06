@@ -1,33 +1,51 @@
 #!/usr/bin/env node
 /**
  * Runtime test for the built extension.
- * Uses createRequire to load build/extension.js as CommonJS so top-level
- * runtime errors (e.g. bare require calls, reference errors) are caught.
+ * Executes build/extension.js inside a vm context so that:
+ *  - The package "type": "module" declaration is irrelevant (no require/import).
+ *  - Top-level runtime errors (reference errors, bare require calls, etc.) are caught.
  * Also reports bundle size and block count.
  */
 
-import { createRequire } from 'module';
+import vm from 'node:vm';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const require = createRequire(import.meta.url);
 
 const BUILD_FILE = path.join(__dirname, '../build/extension.js');
 
 // Provide a minimal Scratch stub so the extension IIFE can register
 let registeredExtension = null;
-globalThis.Scratch = {
-  extensions: {
-    register: ext => {
-      registeredExtension = ext;
+const context = vm.createContext({
+  Scratch: {
+    extensions: {
+      register: ext => {
+        registeredExtension = ext;
+      },
+    },
+    translate: str => str,
+    BlockType: {
+      COMMAND: 'command',
+      REPORTER: 'reporter',
+      BOOLEAN: 'boolean',
+      CONDITIONAL: 'conditional',
+      HAT: 'hat',
+      LOOP: 'loop',
+    },
+    ArgumentType: {
+      STRING: 'string',
+      BOOLEAN: 'boolean',
+      NUMBER: 'number',
+      COLOR: 'color',
+      ANGLE: 'angle',
     },
   },
-  translate: str => str,
-};
+});
 
-require(BUILD_FILE);
+const code = fs.readFileSync(BUILD_FILE, 'utf8');
+vm.runInContext(code, context);
 console.log('Runtime check passed.');
 
 // Report bundle size
