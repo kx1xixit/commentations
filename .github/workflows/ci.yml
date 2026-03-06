@@ -211,8 +211,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Validate extension source
+        run: npm run validate
+
       - name: Build extension
         run: npm run build
+
+      - name: Run tests
+        run: node scripts/test.js
 
       - name: Verify build output
         run: |
@@ -245,38 +251,83 @@ jobs:
           node -e "
             const m = require('./src/manifest.json');
             let failed = false;
-            // Restored literal '$' check from original security.yml
-            if (!/^[a-zA-Z][a-zA-Z0-9_]*\$/.test(m.id)) {
-              console.error(\`::error file=src/manifest.json::Invalid ID format: \"\${m.id}\". Must end with '$'.\`);
+            if (!/^[a-zA-Z][a-zA-Z0-9_]*$/.test(m.id)) {
+              console.error(\`::error file=src/manifest.json::Invalid ID format: \"\${m.id}\". Must start with a letter and contain only letters, digits, or underscores.\`);
               failed = true;
             }
-            if (!/^\d+\.\d+\.\d+/.test(m.version)) {
+            if (!/^\d+\.\d+\.\d+(?:-[a-zA-Z0-9.-]+)?(?:\+[a-zA-Z0-9.-]+)?$/.test(m.version)) {
               console.error(\`::error file=src/manifest.json::Invalid version: \"\${m.version}\". Use SemVer (e.g. 1.0.0).\`);
               failed = true;
             }
             if (failed) process.exit(1);
           "
 
-      - name: Upload build artifact
+      - name: Upload build artifacts
+        id: upload-artifact
         uses: actions/upload-artifact@v7
         with:
           name: extension-${{ matrix.node-version }}
-          path: build/extension.js
+          path: build/
           retention-days: 7
 
       - name: Comment PR with build report
         if: github.event_name == 'pull_request' && matrix.node-version == '20.x'
         uses: actions/github-script@v8
+        env:
+          ARTIFACT_URL: ${{ steps.upload-artifact.outputs.artifact-url }}
         with:
           script: |
             const fs = require('fs');
-            const size = (fs.statSync('build/extension.js').size / 1024).toFixed(2);
-            github.rest.issues.createComment({
+            const bytes = fs.statSync('build/extension.js').size;
+            const sizeStr = bytes >= 1024 * 1024 * 1024
+              ? `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`
+              : bytes >= 1024 * 1024
+                ? `${(bytes / (1024 * 1024)).toFixed(2)} MB`
+                : `${(bytes / 1024).toFixed(2)} KB`;
+            const artifactUrl = process.env.ARTIFACT_URL;
+
+            const marker = '<!-- commentations-build-report -->';
+            const downloadSection = artifactUrl
+              ? [
+                  '',
+                  `**[⬇ Download build artifacts](${artifactUrl})**`,
+                  `> Artifacts expire after 7 days. You must be signed in to GitHub to download them.`,
+                ]
+              : ['', '_Artifact download link unavailable._'];
+
+            const body = [
+              marker,
+              '### Build report (Node ${{ matrix.node-version }})',
+              '- **Status**: [+] Success',
+              `- **Bundle size**: ${sizeStr}`,
+              '- **Verification**: Structure, syntax & tests valid',
+              ...downloadSection,
+            ].join('\n');
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `### Build report (Node ${{ matrix.node-version }})\n- **Status**: Success\n- **Bundle Size**: ${size} KB\n- **Verification**: Structure & Syntax Valid`
+              per_page: 100,
             });
+
+            const botComments = comments.filter(c => c.user?.login === 'github-actions[bot]' && c.body.includes(marker));
+            const existing = botComments[botComments.length - 1];
+            if (existing) {
+              await github.rest.issues.updateComment({
+                comment_id: existing.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
 
   # ------------------------------------------------------------------
   # JOB 5: Dependabot Auto-Approve

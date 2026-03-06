@@ -29,7 +29,7 @@ function getManifest() {
   if (fs.existsSync(manifestPath)) {
     try {
       return JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    } catch (err) {
+    } catch (_err) {
       console.warn('Warning: Could not parse manifest.json');
       return {};
     }
@@ -205,7 +205,7 @@ async function watchFiles() {
   let chokidar;
   try {
     chokidar = (await import('chokidar')).default;
-  } catch (err) {
+  } catch (_err) {
     console.error('Watch mode requires chokidar. Install it with: npm install --save-dev chokidar');
     process.exit(1);
   }
@@ -213,7 +213,7 @@ async function watchFiles() {
   console.log('Watching for changes in', SRC_DIR);
 
   const watcher = chokidar.watch(SRC_DIR, {
-    ignored: /(^|[\/\\])\./,
+    ignored: /(^|[/\\])\./,
     ignoreInitial: true,
     awaitWriteFinish: {
       stabilityThreshold: 100,
