@@ -32,6 +32,9 @@ jobs:
       - name: Build extension
         run: npm run build
 
+      - name: Smoke-test built bundle
+        run: node scripts/test.js
+
       - name: Verify output
         run: |
           if [ ! -f build/extension.js ]; then

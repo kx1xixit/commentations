@@ -52,16 +52,23 @@ console.log('Runtime check passed.');
 const size = (fs.statSync(BUILD_FILE).size / 1024).toFixed(2);
 console.log(`Bundle size:   ${size} KB`);
 
+// Verify an extension was actually registered
+if (!registeredExtension || typeof registeredExtension.getInfo !== 'function') {
+  console.error('No extension was registered or getInfo() is missing — bundle is broken.');
+  process.exit(1);
+}
+
 // Report block count via getInfo()
-if (registeredExtension && typeof registeredExtension.getInfo === 'function') {
-  try {
-    const info = registeredExtension.getInfo();
-    const blockCount = info?.blocks?.length ?? 0;
-    console.log(`Blocks:        ${blockCount} (extension id: ${info?.id})`);
-  } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
-    console.error(`Could not call getInfo() on registered extension: ${detail}`);
+try {
+  const info = registeredExtension.getInfo();
+  if (!info || !Array.isArray(info.blocks)) {
+    console.error('getInfo() returned invalid data (null/undefined or missing blocks array).');
+    process.exit(1);
   }
-} else {
-  console.warn('Could not retrieve block info from registered extension.');
+  const blockCount = info.blocks.length;
+  console.log(`Blocks:        ${blockCount} (extension id: ${info.id})`);
+} catch (err) {
+  const detail = err instanceof Error ? err.message : String(err);
+  console.error(`getInfo() threw an error: ${detail}`);
+  process.exit(1);
 }

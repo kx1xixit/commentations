@@ -9,8 +9,8 @@
     "watch": "node scripts/build.js --watch",
     "test": "npm run build && node scripts/test.js",
     "validate": "node scripts/validate.js",
-    "lint": "eslint src/",
-    "format": "prettier --write src/",
+    "lint": "eslint src/ scripts/ eslint.config.mjs",
+    "format": "prettier --write src/ scripts/ eslint.config.mjs",
     "spellcheck": "cspell",
     "fullstack": "npm run format && npm run lint && npm run spellcheck && npm run validate && npm run build"
   },
